@@ -1,0 +1,9 @@
+html 
+    head 
+        title Create new user 
+    body 
+        form(action="/user", method="post")
+            input(type="text" name="username" placeholder="username")
+            input(type="text" name="role" placeholder="role")
+            input(type="password" name="password" placeholder="password")
+            input(type="submit" value="Create") 

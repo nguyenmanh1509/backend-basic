@@ -1,0 +1,70 @@
+extends ../layouts/admin-layout
+
+block content
+    h1.mb-4= story ? 'Chỉnh sửa truyện' : 'Thêm truyện mới'
+
+    if error
+        .alert.alert-danger= error
+
+    form(method="POST" action=story ? `/admin/stories/${story._id}` : '/admin/stories')
+        .card
+            .card-body
+                .row
+                    .col-md-8
+                        .mb-3
+                            label.form-label(for="title") Tên truyện
+                            input.form-control#title(
+                                type="text" 
+                                name="title" 
+                                required
+                                value=story ? story.title : ''
+                            )
+
+                        .mb-3
+                            label.form-label(for="author") Tác giả
+                            input.form-control#author(
+                                type="text" 
+                                name="author" 
+                                required
+                                value=story ? story.author : ''
+                            )
+
+                        .mb-3
+                            label.form-label(for="category") Thể loại
+                            select.form-control#category(name="category" required)
+                                option(value="") Chọn thể loại
+                                each category in ['Hành động', 'Tình cảm', 'Kinh dị', 'Hài hước', 'Khoa học']
+                                    option(
+                                        value=category 
+                                        selected=story && story.category === category
+                                    )= category
+
+                        .mb-3
+                            label.form-label(for="description") Mô tả
+                            textarea.form-control#description(
+                                name="description" 
+                                rows="4"
+                            )= story ? story.description : ''
+
+                    .col-md-4
+                        .mb-3
+                            label.form-label(for="coverImage") Link ảnh bìa
+                            input.form-control#coverImage(
+                                type="text" 
+                                name="coverImage"
+                                placeholder="URL của ảnh"
+                                value=story ? story.coverImage : ''
+                            )
+
+                        .mb-3
+                            label.form-label(for="status") Trạng thái
+                            select.form-control#status(name="status" required)
+                                each status in ['draft', 'published']
+                                    option(
+                                        value=status 
+                                        selected=story && story.status === status
+                                    )= status === 'draft' ? 'Bản nháp' : 'Đã xuất bản'
+
+            .card-footer
+                button.btn.btn-primary(type="submit") #{story ? 'Cập nhật' : 'Thêm mới'}
+                a.btn.btn-secondary.ms-2(href="/admin/stories") Hủy

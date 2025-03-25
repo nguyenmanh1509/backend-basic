@@ -1,0 +1,42 @@
+extends ../layout
+
+block content
+  .container
+    h1.mt-4 Danh sách người dùng
+    
+    table.table.mt-3
+      thead
+        tr
+          th ID
+          th Tên người dùng
+          th Email
+          th Vai trò
+          th Ngày tạo
+          th Thao tác
+      
+      tbody
+        each user in users
+          tr
+            td= user._id
+            td= user.username
+            td= user.email 
+            td= user.role
+            td= user.createdAt
+            td
+              .btn-group
+                a.btn.btn-sm.btn-primary(href=`/admin/users/${user._id}/edit`) Sửa
+                button.btn.btn-sm.btn-danger(onclick=`deleteUser('${user._id}')`) Xóa
+
+    script.
+      async function deleteUser(id) {
+        if(confirm('Bạn có chắc chắn muốn xóa người dùng này?')) {
+          try {
+            await fetch(`/admin/users/${id}`, {
+              method: 'DELETE'
+            });
+            window.location.reload();
+          } catch(err) {
+            alert('Có lỗi xảy ra khi xóa người dùng');
+          }
+        }
+      }

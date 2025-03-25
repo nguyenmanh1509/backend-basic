@@ -1,0 +1,21 @@
+html 
+    head 
+        title User Management 
+        link(rel="stylesheet", href="/public/style.css")
+    body 
+        h2 User Management 
+        a(href="/create-user") tạo tài khoản
+        table(class="content-table") 
+            thead 
+                td Username 
+                td Role 
+                td Action
+            tbody 
+                each user in users 
+                    tr 
+                        td=user.username 
+                        td=user.role 
+                        td 
+                            a(href=`/user/${user._id}`) Delete
+                            br
+                            a(href=`/update-user/${user._id}`) Update

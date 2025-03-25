@@ -1,0 +1,116 @@
+extends ../layouts/admin-layout
+
+block content
+    h1.mb-4 Quản lý hệ thống
+    
+    .row
+        .col-md-4
+            .card.bg-primary.text-white.mb-4
+                .card-body
+                    h5.card-title Tổng số người dùng
+                    h2.card-text #{stats.totalUsers || 0}
+                .card-footer.d-flex.align-items-center.justify-content-between
+                    a.small.text-white(href="/admin/users") Chi tiết
+        
+        .col-md-4
+            .card.bg-success.text-white.mb-4
+                .card-body
+                    h5.card-title Tổng số truyện
+                    h2.card-text #{stats.totalStories || 0}
+                .card-footer.d-flex.align-items-center.justify-content-between
+                    a.small.text-white(href="/admin/stories") Chi tiết
+
+    // Phần quản lý truyện
+    .card.mt-4
+        .card-header.d-flex.justify-content-between.align-items-center
+            h5.mb-0 Quản lý truyện
+            a.btn.btn-primary(href="/admin/stories/create") 
+                i.fas.fa-plus.me-1
+                | Thêm truyện mới
+
+        .card-body
+            if error
+                .alert.alert-danger= error
+            
+            .table-responsive
+                table.table.table-striped.table-hover
+                    thead.table-light
+                        tr
+                            th(style="width: 80px") Ảnh bìa
+                            th Tên truyện
+                            th Tác giả
+                            th Thể loại
+                            th Lượt xem
+                            th Trạng thái
+                            th(style="width: 120px") Thao tác
+                    tbody
+                        if stories && stories.length > 0
+                            each story in stories
+                                tr
+                                    td
+                                        if story.coverImage
+                                            img.img-thumbnail(
+                                                src=story.coverImage 
+                                                alt=story.title 
+                                                style="width: 60px; height: 80px; object-fit: cover;"
+                                            )
+                                        else
+                                            img.img-thumbnail(
+                                                src="/public/image/no-image.png" 
+                                                alt="No image" 
+                                                style="width: 60px; height: 80px; object-fit: cover;"
+                                            )
+                                    td
+                                        .fw-bold= story.title
+                                        small.text-muted= new Date(story.createdAt).toLocaleDateString('vi-VN')
+                                    td= story.author
+                                    td
+                                        span.badge.bg-info= story.category
+                                    td= story.views || 0
+                                    td
+                                        if story.status === 'published'
+                                            span.badge.bg-success Đã xuất bản
+                                        else
+                                            span.badge.bg-warning Bản nháp
+                                    td
+                                        .btn-group
+                                            a.btn.btn-sm.btn-info.me-1(
+                                                href=`/admin/stories/edit/${story._id}`
+                                                title="Sửa"
+                                            )
+                                                i.fas.fa-edit sửa
+                                            button.btn.btn-sm.btn-danger(
+                                                onclick=`deleteStory('${story._id}')`
+                                                title="Xóa"
+                                            )
+                                                i.fas.fa-trash xoa
+                        else
+                            tr
+                                td.text-center(colspan="7") 
+                                    .py-4.text-muted
+                                        i.fas.fa-book.fa-2x.mb-2.d-block
+                                        | Chưa có truyện nào
+
+    script.
+        function deleteStory(storyId) {
+            if (confirm('Bạn có chắc chắn muốn xóa truyện này?')) {
+                fetch(`/admin/stories/${storyId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('Có lỗi xảy ra khi xóa truyện');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Có lỗi xảy ra khi xóa truyện');
+                });
+            }
+        }

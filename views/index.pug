@@ -1,0 +1,148 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title truyenmoi.com
+    link(rel="stylesheet" href="/public/css/bootstrap.min.css")
+    link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer")
+    style.
+      body { font-family: 'Arial', sans-serif; }
+      .header { background-color: #ff0000; color: white; }
+      .navbar { padding: 0.5rem 1rem; }
+      .navbar-brand { font-weight: bold; }
+      .nav-link { color: #333 !important; }
+      .nav-link:hover { color: #007bff !important; }
+      .btn-outline-light { border-color: white; color: white; }
+      .btn-outline-light:hover { background-color: white; color: #ff0000; }
+      .btn-light { background-color: white; color: #ff0000; }
+      .btn-light:hover { background-color: #f8f9fa; color: #ff0000; }
+      .footer { background-color: #343a40; color: #fff; padding: 3rem 0; }
+      .footer h5 { color: #007bff; margin-bottom: 1rem; }
+      .footer p { margin-bottom: 0.5rem; }
+      .social-icons a { color: #fff; font-size: 1.5rem; margin-right: 1rem; }
+      .social-icons a:hover { color: #007bff; }
+      .story-card { transition: transform 0.2s; }
+      .story-card:hover { transform: translateY(-5px); }
+      .story-card .card-img-top { height: 250px; object-fit: cover; }
+      .story-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 0.5rem; }
+      .story-author { font-size: 0.9rem; color: #666; }
+      .story-category { font-size: 0.8rem; }
+      .story-views { font-size: 0.8rem; color: #666; }
+      .story-description {
+        font-size: 0.9rem;
+        color: #666;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        margin-bottom: 1rem;
+      }
+
+  body
+    header.header
+      .container
+        .row.align-items-center.py-3
+          .col-md-3
+            img.img-fluid(src="/public/image/lg2.png" alt="Logo")
+          .col-md-6
+            form.d-flex(role="search")
+              input.form-control.me-2(type="search" placeholder="Tìm kiếm truyện..." aria-label="Search")
+              button.btn.btn-outline-light(type="submit") Tìm kiếm
+          .col-md-3.text-end
+            if !user
+              a.btn.btn-outline-light.me-2(href="/login") Đăng nhập
+              a.btn.btn-light(href="/users") Đăng ký
+            else
+              span.text-white.me-2 Xin chào #{user.username}
+              a.btn.btn-light(href="/logout") Đăng xuất
+
+    nav.navbar.navbar-expand-lg.navbar-light.bg-light
+      .container
+        button.navbar-toggler(type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation")
+          span.navbar-toggler-icon
+        #navbarNav.collapse.navbar-collapse
+          ul.navbar-nav.me-auto.mb-2.mb-lg-0
+            li.nav-item
+              a.nav-link.active(aria-current="page" href="#") Trang chủ
+            li.nav-item
+              a.nav-link(href="#") Thể loại
+            li.nav-item
+              a.nav-link(href="#") Xếp hạng
+            li.nav-item
+              a.nav-link(href="#") Tác giả
+            li.nav-item
+              a.nav-link(href="#") Tin tức
+
+    main.container.my-5
+      if error
+        .alert.alert-danger.mb-4= error
+      
+      h2.mb-4 
+        i.fas.fa-book.me-2
+        | Truyện Mới Nhất
+      
+      .row
+        if stories && stories.length > 0
+          each story in stories
+            .col-md-3.mb-4
+              .card.story-card.h-100
+                if story.coverImage 
+                  img.card-img-top(src=story.coverImage alt=story.title)
+                else
+                  img.card-img-top(src="/public/image/no-image.png" alt="No image")
+                .card-body
+                  h5.story-title= story.title
+                  p.story-author
+                    i.fas.fa-user.me-1
+                    | #{story.author}
+                  p.story-category.mb-2
+                    span.badge.bg-info= story.category
+                  p.story-views.mb-2
+                    i.fas.fa-eye.me-1
+                    | #{story.views || 0} lượt xem
+                  if story.description
+                    p.story-description= story.description
+                  a.btn.btn-primary.w-100(href=`/stories/${story._id}`) 
+                    i.fas.fa-book-reader.me-1
+                    | Đọc ngay
+        else
+          .col-12.text-center.py-5
+            i.fas.fa-books.fa-3x.mb-3.text-muted
+            p.text-muted Chưa có truyện nào được đăng tải
+
+    footer.footer
+      .container
+        .row
+          .col-md-4
+            h5 Về Chúng Tôi
+            p Truyenmoi.com là trang web đọc truyện online hàng đầu Việt Nam, cung cấp đa dạng các thể loại truyện cho độc giả.
+          .col-md-4
+            h5 Liên Hệ
+            p
+              i.fas.fa-envelope.me-2
+              | Email: duy223ac@gmail.com
+              br
+              i.fas.fa-phone.me-2
+              | Điện thoại: 0392931795
+              br
+              i.fas.fa-map-marker-alt.me-2
+              a.text-white(
+                href="https://maps.google.com/?q=56+Cửu+Việt+2,+Trâu+Quỳ,+Gia+Lâm,+Hà+Nội" 
+                target="_blank"
+                title="Xem trên Google Maps"
+              ) Địa chỉ: 56 Cửu Việt 2, Trâu Quỳ, Gia Lâm, Hà Nội
+          .col-md-4
+            h5 Kết Nối
+            .social-icons
+              a(href="https://www.facebook.com/duy11234"): i.fab.fa-facebook
+              a(href="https://www.google.com/"): i.fab.fa-twitter
+              a(href="https://www.google.com/"): i.fab.fa-instagram
+              a(href="https://www.google.com/"): i.fab.fa-youtube
+        hr
+        .row
+          .col-md-12.text-center
+            p &copy; 2023 truyenmoi.com. Tất cả quyền được bảo lưu.
+
+    script(src="/public/js/bootstrap.bundle.min.js")
